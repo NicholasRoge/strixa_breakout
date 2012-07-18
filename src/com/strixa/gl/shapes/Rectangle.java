@@ -4,7 +4,7 @@
  */
 package com.strixa.gl.shapes;
 
-import java.awt.Dimension;
+import com.strixa.util.Dimension;
 
 import javax.media.opengl.GL2;
 
@@ -16,7 +16,7 @@ import com.strixa.gl.Strixa2DElement;
  * @author Nicholas Rogé
  */
 public class Rectangle extends Strixa2DElement{
-    private Dimension __dimensions;
+    private Dimension<Double> __dimensions;
     
     
     /*Begin Constructors*/
@@ -40,9 +40,9 @@ public class Rectangle extends Strixa2DElement{
         
         gl.glBegin(GL2.GL_QUADS);
             gl.glVertex3d(0,0,0);
-            gl.glVertex3d(dimensions.getWidth(),0,0);
-            gl.glVertex3d(dimensions.getWidth(),dimensions.getHeight(),0);
-            gl.glVertex3d(0,dimensions.getHeight(),0);
+            gl.glVertex3d((Double)dimensions.getWidth(),0,0);
+            gl.glVertex3d((Double)dimensions.getWidth(),(Double)dimensions.getHeight(),0);
+            gl.glVertex3d(0,(Double)dimensions.getHeight(),0);
         gl.glEnd();
     }
     /*End Overridden Methods*/
@@ -55,7 +55,7 @@ public class Rectangle extends Strixa2DElement{
      */
     public Dimension getDimensions(){
         if(this.__dimensions == null){
-            this.__dimensions = new Dimension();  //We just made a new dimension...?  (*  ).(  *)  *derp*
+            this.__dimensions = new Dimension(0,0);  //We just made a new dimension...?  (*  ).(  *)  *derp*
         }
         
         return this.__dimensions;
@@ -68,7 +68,7 @@ public class Rectangle extends Strixa2DElement{
      * @param height Height of the rectangle.
      */
     public void setDimensions(double width,double height){
-        this.getDimensions().setSize(width,height);
+        this.getDimensions().setDimensions(width,height);
     }
     
     /**
@@ -77,7 +77,7 @@ public class Rectangle extends Strixa2DElement{
      * @param height Height of the rectangle.
      */
     public void setHeight(double height){
-        this.setDimensions(this.getDimensions().getHeight(),height);
+        this.getDimensions().setHeight(this.getDimensions().getHeight());
     }
     
     /**
@@ -86,7 +86,7 @@ public class Rectangle extends Strixa2DElement{
      * @param width Width of the rectangle.
      */
     public void setWidth(double width){
-        this.setDimensions(width,this.getDimensions().getHeight());
+        this.getDimensions().setWidth(width);
     }
     /*End Getter/Setter Methods*/
 }

@@ -96,7 +96,7 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
     
     public void display(GLAutoDrawable drawable){
         drawable.getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-        this.draw((GL2)drawable.getGL());
+        this.draw(drawable.getGL().getGL2());
     }
     
     public void dispose(GLAutoDrawable drawable){

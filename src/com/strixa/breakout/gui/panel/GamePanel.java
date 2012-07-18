@@ -13,6 +13,7 @@ import javax.media.opengl.GLProfile;
 
 import com.strixa.breakout.gui.gl.Paddle;
 import com.strixa.gl.StrixaGLCanvas;
+import com.strixa.gl.shapes.Circle;
 import com.strixa.gui.StrixaWindow;
 import com.strixa.gui.panel.StrixaPanel;
 
@@ -44,7 +45,8 @@ public class GamePanel extends StrixaPanel implements Runnable{
         
         this.__canvas = new StrixaGLCanvas(new Dimension(640,480),capabilities);
         this.__paddle = new Paddle(.5,.05);
-        this.__canvas.addChild(this.__paddle);
+        //this.__canvas.addChild(this.__paddle);
+        this.__canvas.addChild(new Circle(.5,360));
         
         this.setSize(new Dimension(640,480));
         this.setLayout(new BorderLayout());

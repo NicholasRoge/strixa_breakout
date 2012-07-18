@@ -48,7 +48,7 @@ public abstract class Strixa2DElement implements StrixaGLElement{
      */
     public Color getColour(){
         if(this.__colour == null){
-            this.__colour = new Color(1,1,1);
+            this.__colour = new Color(1f,1f,1f);
         }
         
         return this.__colour;
