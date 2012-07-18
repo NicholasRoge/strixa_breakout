@@ -90,6 +90,8 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
                 gl.glPopMatrix();
             }
         }
+        
+        this.swapBuffers();
     }
     
     public void display(GLAutoDrawable drawable){
