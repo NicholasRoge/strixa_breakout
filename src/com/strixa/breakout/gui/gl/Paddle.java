@@ -4,11 +4,6 @@
  */
 package com.strixa.breakout.gui.gl;
 
-import java.awt.Dimension;
-
-import javax.media.opengl.GL2;
-
-import com.strixa.gl.Strixa2DElement;
 import com.strixa.gl.shapes.Rectangle;
 
 /**

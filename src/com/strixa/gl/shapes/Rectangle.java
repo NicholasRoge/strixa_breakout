@@ -4,11 +4,10 @@
  */
 package com.strixa.gl.shapes;
 
-import com.strixa.util.Dimension;
-
 import javax.media.opengl.GL2;
 
 import com.strixa.gl.Strixa2DElement;
+import com.strixa.util.Dimension;
 
 /**
  * A rectangle whose handle is in the top left corner.

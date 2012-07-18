@@ -6,6 +6,7 @@ package com.strixa.breakout.gui;
 
 import com.strixa.breakout.gui.panel.GamePanel;
 import com.strixa.gui.StrixaWindow;
+import com.strixa.gui.StrixaWindow.WindowAction;
 
 /**
  * TODO:  Write Class Description

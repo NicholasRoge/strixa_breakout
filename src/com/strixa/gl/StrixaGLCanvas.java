@@ -13,6 +13,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
+import javax.media.opengl.glu.GLU;
 
 /**
  * Creates an object which any Strixa elements should be drawn on.
@@ -23,6 +24,10 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
     private static final long serialVersionUID = -6426147154592668101L;
     
     private List<StrixaGLElement> __children;
+    private double                __max_visible_x;
+    private double                __max_visible_y;
+    private double                __min_visible_x;
+    private double                __min_visible_y;
     
     
     /*Begin Constructors*/
@@ -44,8 +49,25 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
     public StrixaGLCanvas(Dimension size,GLCapabilities capabilities){
         super(capabilities);
         
+        final double width_height_ratio = size.getWidth()/size.getHeight(); 
+        
+        
         this.addGLEventListener(this);
         this.setSize(size);
+        
+        if(width_height_ratio<=1){  //I.E.:  The screen's height is larger than the screen's width.
+            this.__min_visible_x=-50;
+            this.__max_visible_x=50;
+            
+            this.__min_visible_y=-50*width_height_ratio;
+            this.__max_visible_y=50*width_height_ratio;
+        }else{
+            this.__min_visible_x=-50*width_height_ratio;
+            this.__max_visible_x=50*width_height_ratio;
+            
+            this.__min_visible_y=-50;
+            this.__max_visible_y=50;
+        }
     }
     /*End Constructors*/
     
@@ -61,6 +83,22 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
         }
         
         return this.__children;
+    }
+    
+    public double getMaxVisibleX(){
+        return this.__max_visible_x;
+    }
+    
+    public double getMaxVisibleY(){
+        return this.__max_visible_y;
+    }
+    
+    public double getMinVisibleX(){
+        return this.__min_visible_x;
+    }
+
+    public double getMinVisibleY(){
+        return this.__min_visible_y;
     }
     /*End Getter/Setter Methods*/
     
@@ -95,7 +133,23 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
     }
     
     public void display(GLAutoDrawable drawable){
+        final Dimension canvas_size = this.getSize();
+        final GLU       glu = new GLU();
+        
+        
+        /*Clear everything up.*/
         drawable.getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+        
+        /*Set up the camera*/
+        drawable.getGL().getGL2().glMatrixMode(GL2.GL_PROJECTION);
+        drawable.getGL().getGL2().glLoadIdentity();
+        
+        glu.gluPerspective(90,canvas_size.getWidth()/canvas_size.getHeight(),1,1000);
+        glu.gluLookAt(0,0,50,0,0,0,0,1,0);
+        
+        drawable.getGL().getGL2().glMatrixMode(GL2.GL_MODELVIEW);
+        
+        /*Draw everything that needs to be drawn.*/
         this.draw(drawable.getGL().getGL2());
     }
     

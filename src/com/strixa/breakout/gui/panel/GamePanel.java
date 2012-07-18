@@ -6,7 +6,6 @@ package com.strixa.breakout.gui.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
 
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
@@ -14,8 +13,11 @@ import javax.media.opengl.GLProfile;
 import com.strixa.breakout.gui.gl.Paddle;
 import com.strixa.gl.StrixaGLCanvas;
 import com.strixa.gl.shapes.Circle;
+import com.strixa.gl.shapes.Rectangle;
 import com.strixa.gui.StrixaWindow;
 import com.strixa.gui.panel.StrixaPanel;
+
+
 
 /**
  * TODO:  Write Class Description
@@ -23,6 +25,7 @@ import com.strixa.gui.panel.StrixaPanel;
  * @author Nicholas Rogé
  */
 public class GamePanel extends StrixaPanel implements Runnable{
+    private Circle __ball;
     private StrixaGLCanvas __canvas;
     private Paddle  __paddle;
     private boolean __exiting;
@@ -43,15 +46,23 @@ public class GamePanel extends StrixaPanel implements Runnable{
         capabilities.setHardwareAccelerated(true);
         capabilities.setDoubleBuffered(true);
         
-        this.__canvas = new StrixaGLCanvas(new Dimension(640,480),capabilities);
-        this.__paddle = new Paddle(.5,.05);
-        //this.__canvas.addChild(this.__paddle);
-        this.__canvas.addChild(new Circle(.5,360));
         
-        this.setSize(new Dimension(640,480));
-        this.setLayout(new BorderLayout());
+        this.setSize(new Dimension(1920,1200));
         
-        this.add(this.__canvas,BorderLayout.CENTER);
+        this.__canvas = new StrixaGLCanvas(new Dimension(1920,1200),capabilities);
+        {
+            this.__paddle = new Paddle(5,1);
+            this.__paddle.setColour(.5f,.5f,.5f);
+            this.__paddle.setCoordinates(-((Double)this.__paddle.getDimensions().getWidth()/2),-45);
+            this.__canvas.addChild(this.__paddle);
+        }
+
+        this.__canvas.addChild(blah);
+        {
+            this.__ball = new Circle(1,360);
+            this.__canvas.addChild(this.__ball);
+        }
+        this.add(this.__canvas);
     }
     /*End Initialization Methods*/
     
@@ -62,7 +73,7 @@ public class GamePanel extends StrixaPanel implements Runnable{
         this._initializeGUI();
         
         this.__exiting = false;
-        this.setFPS(10);
+        this.setFPS(24);
         
         this.__game_loop = new Thread(this);
         this.__game_loop.start();

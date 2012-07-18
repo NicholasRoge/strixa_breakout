@@ -4,7 +4,6 @@
  */
 package com.strixa.gl;
 
-import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 
 
