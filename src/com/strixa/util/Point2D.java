@@ -9,14 +9,18 @@ package com.strixa.util;
  *
  * @author Nicholas Rogé
  */
-public class Point<T>{
+public class Point2D<T extends Number>{
     private T __x;
     private T __y;
     
     
     /*Begin Constructors*/
-    public Point(T x,T y){
+    public Point2D(T x,T y){
         this.setPoint(x,y);
+    }
+    
+    public Point2D(Point2D<T> copy){
+        this.setPoint(copy.getX(),copy.getY());
     }
     /*End Constructors*/
     
@@ -42,4 +46,18 @@ public class Point<T>{
         this.__y = y;
     }
     /*End Getter/Setter Methods*/
+    
+    /*Begin Other Methods*/
+    public boolean equals(Point2D<T> point){
+        if(this.getX()==point.getX() && this.getY()==point.getY()){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public String toString(){
+        return "("+this.getX()+","+this.getY()+")";
+    }
+    /*End Other Methods*/
 }

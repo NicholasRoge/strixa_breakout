@@ -5,6 +5,8 @@
 package com.strixa.breakout.main;
 
 import com.strixa.breakout.gui.MainWindow;
+import com.strixa.util.Line;
+import com.strixa.util.Point2D;
 
 /**
  * TODO:  Write Class Description

@@ -4,7 +4,8 @@
  */
 package com.strixa.gl;
 
-import java.awt.Dimension;
+import com.strixa.util.Dimension2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +21,12 @@ import javax.media.opengl.glu.GLU;
  *
  * @author Nicholas Rogé
  */
-public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventListener{
+public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener,Runnable{
     private static final long serialVersionUID = -6426147154592668101L;
     
-    private List<StrixaGLElement> __children;
-    private double                __max_visible_x;
-    private double                __max_visible_y;
-    private double                __min_visible_x;
-    private double                __min_visible_y;
+    private StrixaGLContext __context;
+    private boolean         __exiting;
+    private Thread          __gui_thread;
     
     
     /*Begin Constructors*/
@@ -37,7 +36,7 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
      * @param capabilities Capabilities GLCanvas should have.
      */
     public StrixaGLCanvas(GLCapabilities capabilities){
-        this(new Dimension(0,0),capabilities);
+        this(new Dimension2D<Integer>(0,0),capabilities);
     }
     
     /**
@@ -46,111 +45,58 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
      * @param size Size this canvas should be.
      * @param capabilities Capabilities GLCanvas should have.
      */
-    public StrixaGLCanvas(Dimension size,GLCapabilities capabilities){
+    public StrixaGLCanvas(Dimension2D<Integer> size,GLCapabilities capabilities){
         super(capabilities);
         
-        final double width_height_ratio = size.getWidth()/size.getHeight(); 
-        
-        
+
         this.addGLEventListener(this);
-        this.setSize(size);
+        this.setSize(new java.awt.Dimension(size.getWidth(),size.getHeight()));
         
-        if(width_height_ratio<=1){  //I.E.:  The screen's height is larger than the screen's width.
-            this.__min_visible_x=-50;
-            this.__max_visible_x=50;
-            
-            this.__min_visible_y=-50*width_height_ratio;
-            this.__max_visible_y=50*width_height_ratio;
-        }else{
-            this.__min_visible_x=-50*width_height_ratio;
-            this.__max_visible_x=50*width_height_ratio;
-            
-            this.__min_visible_y=-50;
-            this.__max_visible_y=50;
-        }
+        this.__exiting=false;
     }
     /*End Constructors*/
     
     /*Begin Getter/Setter Methods*/
-    /**
-     * Gets this object's StrixaGLElement children.
-     * 
-     * @return This object's StrixaGLElement children.
-     */
-    public List<StrixaGLElement> getChildren(){
-        if(this.__children==null){
-            this.__children = new ArrayList<StrixaGLElement>();
+    public void setFPS(int fps){
+        this.__context.setCurrentFPS(fps);
+    }
+    
+    public int getFPS(){
+        return this.__context.getCurrentFPS();
+    }
+    
+    public Thread getGUIThread(){
+        if(this.__gui_thread == null){
+            this.__gui_thread = new Thread(this);
         }
         
-        return this.__children;
+        return this.__gui_thread;
     }
     
-    public double getMaxVisibleX(){
-        return this.__max_visible_x;
-    }
-    
-    public double getMaxVisibleY(){
-        return this.__max_visible_y;
-    }
-    
-    public double getMinVisibleX(){
-        return this.__min_visible_x;
-    }
-
-    public double getMinVisibleY(){
-        return this.__min_visible_y;
+    /**
+     * Gets the canvas' context.
+     * 
+     * @return The canvas' context.
+     */
+    public StrixaGLContext getStrixaGLContext(){
+        if(this.__context == null){
+            this.__context = new StrixaGLContext();
+        }
+        
+        return this.__context;
     }
     /*End Getter/Setter Methods*/
     
-    /*Begin Other Methods*/
-    /**
-     * Adds a child to this canvas.
-     * 
-     * @param child Child to be added to the canvas.
-     */
-    public void addChild(StrixaGLElement child){
-        final List<StrixaGLElement> children = this.getChildren();
-        
-        
-        if(!children.contains(child)){
-            children.add(child);
-        }
-    }
-    
-    public void draw(GL2 gl){
-        final List<StrixaGLElement> children = this.getChildren();
-        
-
-        synchronized(children){
-            for(StrixaGLElement child:children){
-                gl.glPushMatrix();
-                    child.draw(gl);
-                gl.glPopMatrix();
-            }
-        }
-        
-        this.swapBuffers();
-    }
-    
+    /*Begin Other Methods*/  
     public void display(GLAutoDrawable drawable){
-        final Dimension canvas_size = this.getSize();
         final GLU       glu = new GLU();
         
         
         /*Clear everything up.*/
         drawable.getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         
-        /*Set up the camera*/
-        drawable.getGL().getGL2().glMatrixMode(GL2.GL_PROJECTION);
-        drawable.getGL().getGL2().glLoadIdentity();
-        
-        glu.gluPerspective(90,canvas_size.getWidth()/canvas_size.getHeight(),1,1000);
-        glu.gluLookAt(0,0,50,0,0,0,0,1,0);
-        
-        drawable.getGL().getGL2().glMatrixMode(GL2.GL_MODELVIEW);
-        
         /*Draw everything that needs to be drawn.*/
-        this.draw(drawable.getGL().getGL2());
+        this._drawChildren(drawable.getGL().getGL2());
     }
     
     public void dispose(GLAutoDrawable drawable){
@@ -163,24 +109,57 @@ public class StrixaGLCanvas extends GLCanvas implements StrixaGLElement,GLEventL
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glDepthFunc(GL2.GL_LEQUAL);
         gl.glClearColor(0f,0f,0f,1f);
-    }
-    
-    /**
-     * Removes a child from this canvas.
-     * 
-     * @param child Child to be removed from the canvas.
-     */
-    public void removeChild(StrixaGLElement child){
-        final List<StrixaGLElement> children = this.getChildren();
         
         
-        if(children.contains(child)){
-            children.remove(child);
-        }
+        
+        
+        /*Set up and start the game thread*/
+        this.getGUIThread().start();
     }
     
     public void reshape(GLAutoDrawable drawable,int x,int y,int width,int height){
         drawable.getGL().glViewport(x,y,width,height);
     }
-    /*End Other Methods*/ 
+    
+    public void run(){
+        long period = -1;
+        long sleep_time = -1;
+        long start_time = -1;
+        long time_taken = -1;
+        
+        
+        while(!this.__exiting){
+            start_time = System.currentTimeMillis();
+            period = 1000 / this.getFPS();
+            
+            this._performGameLogic(this.getStrixaGLContext());
+            this.display();
+
+            time_taken = System.currentTimeMillis() - start_time;
+            sleep_time = period-time_taken;
+            
+            try{
+                if(sleep_time>0){
+                    Thread.sleep(sleep_time);  //If sleep time is less than or equal to 0, we may as well not even sleep.
+                }
+            }catch(InterruptedException e){
+                System.out.println("Thread interrupted for some reason.");  //TODO:  Oh yeah...  That's a really helpful message you have there.  What do you THINK the todo is for?
+            }
+        }
+        
+        return;
+    }
+    
+    public void triggerExiting(){
+        this.__exiting = true;
+        
+        //TODO:  Call this this object's onExit listeners
+    }
+    /*End Other Methods*/
+    
+    /*Begin Abstract Methods*/
+    protected abstract void _drawChildren(GL2 gl);
+    
+    protected abstract void _performGameLogic(StrixaGLContext context);
+    /*End Abstract Methods*/
 }
