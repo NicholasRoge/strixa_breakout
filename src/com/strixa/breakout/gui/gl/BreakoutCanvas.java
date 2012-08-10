@@ -43,8 +43,8 @@ public class BreakoutCanvas extends Strixa2DCanvas{
         
         this.__ball = new Ball(1,100);
         this.__ball.setCoordinates(this.getMajourAxisUnits()/2,this.getMinorAxisUnits()/2);
-        this.__ball.setMomentum(12);
-        this.__ball.setAngle(0);
+        this.__ball.setMomentum(-48);
+        this.__ball.setAngle(4);
         this.addChild(this.__ball);
         
         this.__paddle = new Paddle(10,1);
@@ -80,9 +80,9 @@ public class BreakoutCanvas extends Strixa2DCanvas{
         if(ball.getAngle()==0){
             delta_x = 0;
             delta_y = units_per_period;
-        }else{
+        }else{  //NOTE:  We don't need to check for when the ball's angle is 90 degrees (i.e.:  Ball is moving only on the x axis)
             delta_x = units_per_period*Math.sin((ball.getAngle()*Math.PI)/180);
-            delta_y = delta_x/(units_per_period*Math.tan((ball.getAngle()*Math.PI)/180));
+            delta_y = units_per_period*Math.cos((ball.getAngle()*Math.PI)/180);
         }
         
         new_coordinates.setPoint(x+delta_x,y+delta_y);
@@ -108,11 +108,12 @@ public class BreakoutCanvas extends Strixa2DCanvas{
             this.getBall().setAngle(-this.getBall().getAngle());
         }else if(new_ball_coordinates.getX()+(this.getBall().getDimensions().getWidth()/2)>this.getStrixaGLContext().getViewableArea().getPoint(Cuboid.PointMask.FRONT,Cuboid.PointMask.BOTTOM,Cuboid.PointMask.RIGHT).getX()){
             this.getBall().setAngle(-this.getBall().getAngle());
-        }else if(this.getBall().isColliding(getPaddle())){
+        }
+        
+        this.getBall().setCoordinates(new_ball_coordinates.getX(),new_ball_coordinates.getY());
+        if(this.getBall().isColliding(getPaddle())){
             this.getBall().setMomentum(-this.getBall().getMomentum());
             this.getBall().setAngle(-this.getBall().getAngle());
-        }else{
-            this.getBall().setCoordinates(new_ball_coordinates.getX(),new_ball_coordinates.getY());
         }
         
         

@@ -9,7 +9,7 @@ package com.strixa.util;
  *
  * @author Nicholas Rogé
  */
-public class Point2D<T extends Number>{
+public class Point2D<T extends Number> extends Point<T>{
     private T __x;
     private T __y;
     

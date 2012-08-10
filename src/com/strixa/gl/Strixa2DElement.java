@@ -151,7 +151,9 @@ public abstract class Strixa2DElement extends StrixaGLElement{
         double this_left_edge = this.getCoordinates().getX();
         
         
-        
+        if(!this.isCollisionDetectionEnabled()){
+            return false;
+        }
         
         if(
             this_top_edge>element_bottom_edge

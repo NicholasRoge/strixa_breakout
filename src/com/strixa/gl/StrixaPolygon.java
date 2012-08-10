@@ -68,6 +68,10 @@ public abstract class StrixaPolygon extends Strixa2DElement{
         Line polygon_two_line = null;
         
         
+        if(!this.isCollisionDetectionEnabled()){
+            return false;
+        }
+        
         for(int index=0;index<this_point_count;index++){
             /*Set up the first point*/
             if(index==0){
