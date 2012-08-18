@@ -20,7 +20,7 @@ public class Cuboid{
      *
      * @author Nicholas Rogé
      */
-    public static class PointMask{
+    public static class Mask{
         public static final byte RIGHT  = 0x2;
         public static final byte LEFT   = 0x3;
         public static final byte TOP    = 0x4;
@@ -58,9 +58,9 @@ public class Cuboid{
     /**
      * Gets the point at the vertex specified by the parameters
      * 
-     * @param z_axis_mask Location relative to the z-axis.  This should be one of either {@link PointMask#FRONT} or {@link PointMask#BACK} 
-     * @param y_axis_mask Location relative to the y-axis.  This should be one of either {@link PointMask#TOP} or {@link PointMask#BOTTOM}
-     * @param x_axis_mask Location relative to the x-axis.  This should be one of either {@link PointMask#RIGHT} or {@link PointMask#LEFT}
+     * @param z_axis_mask Location relative to the z-axis.  This should be one of either {@link Mask#FRONT} or {@link Mask#BACK} 
+     * @param y_axis_mask Location relative to the y-axis.  This should be one of either {@link Mask#TOP} or {@link Mask#BOTTOM}
+     * @param x_axis_mask Location relative to the x-axis.  This should be one of either {@link Mask#RIGHT} or {@link Mask#LEFT}
      * 
      * @return Returns the point at the given vertex.
      */

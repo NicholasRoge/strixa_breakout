@@ -9,4 +9,4 @@ package com.strixa.util;
  *
  * @author Nicholas Rogé
  */
-public abstract class Dimension<T>{}
+public abstract class Dimension<T extends Number>{}

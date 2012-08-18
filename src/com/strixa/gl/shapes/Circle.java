@@ -7,9 +7,6 @@ package com.strixa.gl.shapes;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.opengl.GL2;
-
-import com.strixa.gl.Strixa2DElement;
 import com.strixa.gl.StrixaPolygon;
 import com.strixa.util.Dimension2D;
 import com.strixa.util.Point2D;
@@ -26,19 +23,17 @@ public class Circle extends StrixaPolygon{
     
     
     /*Begin Constructors*/
-    public Circle(double radius,int fan_count){
-        final List<Point2D<Double>> points = new ArrayList<Point2D<Double>>();
-        
-        
+    /**
+     * Constructs a circle with a given radius.
+     * 
+     * @param radius Radius the circle should take on.
+     * @param fan_count This number defines the number of lines on the outside parameter of the circle.
+     */
+    public Circle(double radius,int fan_count){        
         this.__radius = radius;
         this.__fan_count = fan_count;
         
-        /*Add polygon points*/
-        for(int point = 0;point < this.__fan_count;point++){
-            points.add(this._getTriangleEndPoint(point));
-        }
-        
-        this._setPoints(points);
+        this._updateProfile();
     }
     /*End Constructors*/
     
@@ -51,17 +46,44 @@ public class Circle extends StrixaPolygon{
         return this.__dimensions;
     }
     
+    /**
+     * Gets the fineness of the cicle's edge.
+     * 
+     * @return The fineness of the circle's edge.
+     */
+    public int getFanCount(){
+        return this.__fan_count;
+    }
+    
+    /**
+     * Sets the fineness of the circle's edge.
+     * 
+     * @param fan_count This number defines the number of lines on the outside parameter of the circle.
+     */
+    public void setFanCount(int fan_count){
+        this.__fan_count = fan_count;
+        
+        this._updateProfile();
+    }
+    
+    /**
+     * Gets this circle's radius.
+     * 
+     * @return This circle's radius.
+     */
     public double getRadius(){
         return this.__radius;
     }
     
-    public void setRadius(double radius){
-        final Dimension2D<Double> dimensions = this.getDimensions();
-        
-        
+    /**
+     * Changes this circle's radius.
+     * 
+     * @param radius New radius this circle should take on.
+     */
+    public void setRadius(double radius){       
         this.__radius = radius;
-        dimensions.setWidth(radius*2);
-        dimensions.setHeight(radius*2);
+        
+        this._updateProfile();
     }
     /*End Getter/Setter Methods*/
     
@@ -80,6 +102,23 @@ public class Circle extends StrixaPolygon{
         end_point.setPoint(Math.sin(radians)*radius,Math.cos(radians)*radius);
         
         return end_point;
+    }
+    
+    protected void _updateProfile(){
+        final Dimension2D<Double> dimensions = this.getDimensions();
+        final List<Point2D<Double>> points = new ArrayList<Point2D<Double>>();
+        
+        
+        /*Update the circles points*/
+        for(int point = 0;point < this.__fan_count;point++){
+            points.add(this._getTriangleEndPoint(point));
+        }
+        
+        this._setPoints(points);
+        
+        /*Update the Dimensions*/
+        dimensions.setWidth(this.getRadius()*2);
+        dimensions.setHeight(this.getRadius()*2);
     }
     /*End Other Methods*/
 }

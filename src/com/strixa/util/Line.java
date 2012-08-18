@@ -12,10 +12,16 @@ package com.strixa.util;
 public class Line{
     private Point2D<Double> __left_endpoint;
     private Point2D<Double> __right_endpoint;
-    private double __slope;
     
     
     /*Begin Constructors*/
+    /**
+     * Constructs a line with it's endpoints at the given locations.
+     * 
+     * @param endpoint_one
+     * @param endpoint_two
+     */
+    @SuppressWarnings("javadoc") //There's no need to give the parameters descriptions
     public Line(Point2D<Double> endpoint_one,Point2D<Double> endpoint_two){
         if(endpoint_one==null || endpoint_two==null){
             throw new NullPointerException();
@@ -32,16 +38,44 @@ public class Line{
     /*End Constructors*/
     
     /*Begin Getter/Setter Methods*/
+    /**
+     * Gets the leftmost endpoint.
+     * 
+     * @return The leftmost endpoint.
+     */
     public Point2D<Double> getLeftEndpoint(){
         return this.__left_endpoint;
     }
     
+    /**
+     * Gets the rightmost endpoint.
+     * 
+     * @return The rightmost endpoint.
+     */
     public Point2D<Double> getRightEndpoint(){
         return this.__right_endpoint;
+    }
+    
+    /**
+     * Gets this line's slope.
+     * 
+     * @return This line's slope.
+     */
+    public double getSlope(){
+        return (this.getLeftEndpoint().getX() - this.getRightEndpoint().getX())/(this.getLeftEndpoint().getY() - this.getRightEndpoint().getY());
     }
     /*End Getter/Setter Methods*/
     
     /*Begin Other Methods*/
+    /**
+     * Gets the point of intersection between two lines.
+     * 
+     * @param line1
+     * @param line2
+     * 
+     * @return A point representing the location the given lines intersect at.
+     */
+    @SuppressWarnings("javadoc") //There's no need to give the parameters descriptions
     public static Point2D<Double> getIntersectionPoint(Line line1,Line line2){
         final Double[] x = {line1.getLeftEndpoint().getX(),line1.getRightEndpoint().getX(),line2.getLeftEndpoint().getX(),line2.getRightEndpoint().getX()};
         final Double[] y = {line1.getLeftEndpoint().getY(),line1.getRightEndpoint().getY(),line2.getLeftEndpoint().getY(),line2.getRightEndpoint().getY()};

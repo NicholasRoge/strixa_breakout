@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
-
-import com.strixa.util.Dimension2D;
 import com.strixa.util.Line;
 import com.strixa.util.Point2D;
 
@@ -51,6 +48,11 @@ public abstract class StrixaPolygon extends Strixa2DElement{
     /*End Other Methods*/
     
     /*Begin Abstract Methods*/
+    /**
+     * Sets the list of points for this polygon to draw.
+     * 
+     * @param points The list of points for this polygon to draw.
+     */
     protected void _setPoints(List<Point2D<Double>> points){
         this.__points.clear();
         this.__points.addAll(points);
@@ -58,6 +60,14 @@ public abstract class StrixaPolygon extends Strixa2DElement{
     /*End Abstract Methods*/
     
     /*Begin Static Methods*/
+    /**
+     * By checking to see if any of this polygon's lines are intersecting with the second polygon's lines, this method determines if the given element is colliding with this one.<br />
+     * <strong>Note:</strong>  An element whose entire being is within this element is not considered to be colliding.
+     * 
+     * @param element Element who you're trying to detect if this object is colliding with.
+     * 
+     * @return Returns true if this object is colliding with the given object, and false, otherwise. 
+     */
     public boolean isColliding(StrixaPolygon element){  //TODO_HIGH:  This method needs heavy optimization.  Rather than creating a bunch of new objects, a list could be crated, for example.
         final int this_point_count = this.__points.size();
         final int element_point_count = element.__points.size();
@@ -69,6 +79,10 @@ public abstract class StrixaPolygon extends Strixa2DElement{
         
         
         if(!this.isCollisionDetectionEnabled()){
+            return false;
+        }
+        
+        if(!super.isColliding(element)){  //If it's not colliding using the bounding box method, there's no reason to continue and use a more expensive collision detection algorithm.
             return false;
         }
         

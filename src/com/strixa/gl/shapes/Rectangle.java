@@ -7,9 +7,6 @@ package com.strixa.gl.shapes;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.media.opengl.GL2;
-
-import com.strixa.gl.Strixa2DElement;
 import com.strixa.gl.StrixaPolygon;
 import com.strixa.util.Dimension2D;
 import com.strixa.util.Point2D;
@@ -30,20 +27,10 @@ public class Rectangle extends StrixaPolygon{
      * @param rectangle_width Width of the rectangle.
      * @param rectangle_height Height of the rectangle.
      */
-    public Rectangle(double rectangle_width,double rectangle_height){
-        final List<Point2D<Double>> points = new ArrayList<Point2D<Double>>();
-        
-        
+    public Rectangle(double rectangle_width,double rectangle_height){        
         this.setDimensions(rectangle_width,rectangle_height);
         
-        
-        /*Add points to the polygon*/
-        points.add(new Point2D<Double>(-(rectangle_width/2),(rectangle_height/2)));
-        points.add(new Point2D<Double>((rectangle_width/2),(rectangle_height/2)));
-        points.add(new Point2D<Double>((rectangle_width/2),-(rectangle_height/2)));
-        points.add(new Point2D<Double>(-(rectangle_width/2),-(rectangle_height/2)));
-        
-        this._setPoints(points);
+        this._updateProfile();
         
     }
     /*End Constructors*/
@@ -65,6 +52,8 @@ public class Rectangle extends StrixaPolygon{
      */
     public void setDimensions(double width,double height){
         this.getDimensions().setDimensions(width,height);
+        
+        this._updateProfile();
     }
     
     /**
@@ -73,7 +62,7 @@ public class Rectangle extends StrixaPolygon{
      * @param height Height of the rectangle.
      */
     public void setHeight(double height){
-        this.getDimensions().setHeight(this.getDimensions().getHeight());
+        this.getDimensions().setDimensions(this.getDimensions().getWidth(),height);
     }
     
     /**
@@ -82,6 +71,24 @@ public class Rectangle extends StrixaPolygon{
      * @param width Width of the rectangle.
      */
     public void setWidth(double width){
-        this.getDimensions().setWidth(width);
+        this.getDimensions().setDimensions(width,this.getDimensions().getHeight());
     }
-    /*End Getter/Setter Methods*/}
+    /*End Getter/Setter Methods*/
+    
+    /*Begin Other Methods*/
+    protected void _updateProfile(){        
+        final double                half_height = this.getDimensions().getHeight()/2;
+        final double                half_width = this.getDimensions().getWidth()/2;
+        final List<Point2D<Double>> points = new ArrayList<Point2D<Double>>();
+        
+        
+        /*Update Points*/
+        points.add(new Point2D<Double>(-half_width,half_height));
+        points.add(new Point2D<Double>(half_width,half_height));
+        points.add(new Point2D<Double>(half_width,-half_height));
+        points.add(new Point2D<Double>(-half_width,-half_height));
+        
+        this._setPoints(points);
+    }
+    /*End Other Methods*/
+}

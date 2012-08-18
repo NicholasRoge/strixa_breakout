@@ -6,15 +6,12 @@ package com.strixa.gl;
 
 import com.strixa.util.Dimension2D;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.awt.GLCanvas;
-import javax.media.opengl.glu.GLU;
+
 
 /**
  * Creates an object which any Strixa elements should be drawn on.
@@ -22,6 +19,7 @@ import javax.media.opengl.glu.GLU;
  * @author Nicholas Rogé
  */
 public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener,Runnable{
+    /** Field needed for the serialization of this object. */
     private static final long serialVersionUID = -6426147154592668101L;
     
     private StrixaGLContext __context;
@@ -57,14 +55,29 @@ public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener
     /*End Constructors*/
     
     /*Begin Getter/Setter Methods*/
+    /**
+     * Sets the maximum number of frames that are displayed in a second.
+     * 
+     * @param fps The frames to be displayed in a second.
+     */
     public void setFPS(int fps){
         this.__context.setCurrentFPS(fps);
     }
     
+    /**
+     * Gets the maximum number of frames that may be displayed in a second.
+     * 
+     * @return The current FPS setting.
+     */
     public int getFPS(){
         return this.__context.getCurrentFPS();
     }
     
+    /**
+     * Returns the thread that the GUI is running in.
+     * 
+     * @return The thread that the GUI is running in.
+     */
     public Thread getGUIThread(){
         if(this.__gui_thread == null){
             this.__gui_thread = new Thread(this);
@@ -74,9 +87,9 @@ public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener
     }
     
     /**
-     * Gets the canvas' context.
+     * Gets the canvas' current context.
      * 
-     * @return The canvas' context.
+     * @return The canvas' current context.
      */
     public StrixaGLContext getStrixaGLContext(){
         if(this.__context == null){
@@ -88,10 +101,7 @@ public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener
     /*End Getter/Setter Methods*/
     
     /*Begin Other Methods*/  
-    public void display(GLAutoDrawable drawable){
-        final GLU       glu = new GLU();
-        
-        
+    public void display(GLAutoDrawable drawable){        
         /*Clear everything up.*/
         drawable.getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         
@@ -150,6 +160,9 @@ public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener
         return;
     }
     
+    /**
+     * This should be called when this canvas is to close and clean itself up.
+     */
     public void triggerExiting(){
         this.__exiting = true;
         
@@ -158,8 +171,18 @@ public abstract class StrixaGLCanvas extends GLCanvas implements GLEventListener
     /*End Other Methods*/
     
     /*Begin Abstract Methods*/
+    /**
+     * Draws this canvas' children.
+     * 
+     * @param gl GL2 canvas that the children should be drawn to.
+     */
     protected abstract void _drawChildren(GL2 gl);
     
+    /**
+     * Define this method to implement your game or program's logic.
+     * 
+     * @param context This is the context in which the game or program is currently running.
+     */
     protected abstract void _performGameLogic(StrixaGLContext context);
     /*End Abstract Methods*/
 }

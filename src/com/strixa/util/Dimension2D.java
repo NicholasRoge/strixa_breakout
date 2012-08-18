@@ -9,7 +9,7 @@ package com.strixa.util;
  *
  * @author Nicholas Rogé
  */
-public class Dimension2D<T> extends Dimension<T>{
+public class Dimension2D<T extends Number> extends Dimension<T>{
     private T __height;
     private T __width;
     

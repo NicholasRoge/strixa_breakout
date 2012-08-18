@@ -5,10 +5,9 @@
 package com.strixa.gl;
 
 import java.awt.Color;
-
 import javax.media.opengl.GL2;
 
-import com.strixa.gl.properties.Cuboid.PointMask;
+import com.strixa.gl.properties.Cuboid.Mask;
 import com.strixa.util.Dimension2D;
 import com.strixa.util.Point2D;
 
@@ -19,6 +18,32 @@ import com.strixa.util.Point2D;
  * @author Nicholas Rogé
  */
 public abstract class Strixa2DElement extends StrixaGLElement{
+    /**
+     * Primarily used for {@link Strixa2DElement#getRelativeLocation(Strixa2DElement)} and {@link Strixa2DElement#getRelativeLocation(Point2D)}; describes an object's position relative to this one.
+     *
+     * @author Nicholas Rogé
+     */
+    public enum Location{
+        /** If the point given is inside of this object. */
+        INSIDE,
+        /** If the point is above, but not to either side of this object. */
+        NORTH,
+        /** If the point is below, but not to either side of this object. */
+        SOUTH,
+        /** If the point is to the right, but not above of below this object. */
+        EAST,
+        /** If the point is to the left, but not above or below this object. */ 
+        WEST,
+        /** If the point is both above, and to the right of this object. */
+        NORTHEAST,
+        /** If the point is both above, and to the left of this object. */
+        NORTHWEST,
+        /** If the point is both below, and to the right of this object. */
+        SOUTHEAST,
+        /** If the point is both below, and to the left of this object. */
+        SOUTHWEST
+    }
+    
     private double __alpha;
     private Color  __colour;
     private Point2D<Double>  __coordinates;
@@ -140,6 +165,69 @@ public abstract class Strixa2DElement extends StrixaGLElement{
         gl.glTranslated(coordinate.getX(),coordinate.getY(),0);
     }
     
+    /**
+     * Returns the location of the given element (by it's coordinate) relative to this element.
+     * 
+     * @param element Element whose relativeness is in question.
+     * 
+     * @return Returns one of {@link #Location}'s enumerations.  See Location's documentation for further information.
+     */
+    public Location getRelativeLocation(Strixa2DElement element){
+        return this.getRelativeLocation(element.getCoordinates());
+    }
+    
+    /**
+     * Returns the location of the given point relative to this element.
+     * 
+     * @param point Point whose relativeness is in question.
+     * 
+     * @return Returns one of {@link #Location}'s enumerations.  See Location's documentation for further information.
+     */
+    public Location getRelativeLocation(Point2D<Double> point){
+        if(this.isPointInside(point)){
+            return Location.INSIDE;
+        }
+        
+        final Point2D<Double> this_coordinates = this.getCoordinates();
+        final double half_height = this.getDimensions().getHeight()/2;
+        final double half_width = this.getDimensions().getWidth()/2;
+        final double max_y = this_coordinates.getY()+(half_height);
+        final double min_y = this_coordinates.getY()-(half_height);
+        final double max_x = this_coordinates.getX()+(half_width);
+        final double min_x = this_coordinates.getX()-(half_width);
+        
+        
+        if(point.getX() < min_x){
+            if(point.getY() > max_y){
+                return Location.NORTHWEST;
+            }else if(point.getY() < min_y){
+                return Location.SOUTHWEST;
+            }else{
+                return Location.WEST;
+            }
+        }else if(point.getX() > max_x){
+            if(point.getY() > max_y){
+                return Location.NORTHEAST;
+            }else if(point.getY() < min_y){
+                return Location.SOUTHEAST;
+            }else{
+                return Location.EAST;
+            }
+        }else if(point.getY() > max_y){
+            return Location.NORTH;
+        }else{
+            return Location.SOUTH;
+        }
+    }
+    
+    /**
+     * Using the bounding box method, determines if the given element is colliding with this one.<br />
+     * <strong>Note:</strong>  An element whose entire being is within this element is not considered to be colliding.
+     * 
+     * @param element Element who you're trying to detect if this object is colliding with.
+     * 
+     * @return Returns true if this object is colliding with the given object, and false, otherwise. 
+     */
     public boolean isColliding(Strixa2DElement element){
         double element_top_edge = element.getCoordinates().getY()+element.getDimensions().getHeight();
         double element_bottom_edge = element.getCoordinates().getY();
@@ -156,9 +244,19 @@ public abstract class Strixa2DElement extends StrixaGLElement{
         }
         
         if(
-            this_top_edge>element_bottom_edge
-            ||
+            this_bottom_edge>element_bottom_edge
+            &&
+            this_top_edge<element_top_edge
+            &&
+            this_left_edge>element_left_edge
+            &&
+            this_right_edge<element_right_edge
+        ){
+            return false;
+        }else if(
             this_bottom_edge<element_top_edge
+            ||
+            this_top_edge>element_bottom_edge
             ||
             this_left_edge<element_right_edge
             ||
@@ -170,11 +268,43 @@ public abstract class Strixa2DElement extends StrixaGLElement{
         }
     }
     
+    /**
+     * Boolean check to see if given point is inside this element.
+     * 
+     * @param point Point to check.
+     * 
+     * @return Returns true if the given point is in this element's boundaries, and false, otherwise.
+     */
+    public boolean isPointInside(Point2D<Double> point){
+        final Point2D<Double> this_coordinates = this.getCoordinates();
+        final double half_height = this.getDimensions().getHeight()/2;
+        final double half_width = this.getDimensions().getWidth()/2;
+        final double max_y = this_coordinates.getY()+(half_height);
+        final double min_y = this_coordinates.getY()-(half_height);
+        final double max_x = this_coordinates.getX()+(half_width);
+        final double min_x = this_coordinates.getX()-(half_width);
+        
+        
+        if(
+            point.getX() < min_x
+            ||
+            point.getX() > max_x
+            ||
+            point.getY() < min_y
+            ||
+            point.getY() > max_y
+        ){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
     public boolean isVisible(StrixaGLContext context){
-        final Point2D<Double> bottom_left_vertex = context.getViewableArea().getPoint(PointMask.FRONT,PointMask.BOTTOM,PointMask.LEFT);
+        final Point2D<Double> bottom_left_vertex = context.getViewableArea().getPoint(Mask.FRONT,Mask.BOTTOM,Mask.LEFT);
         final Point2D<Double> coordinates = this.getCoordinates();
         final Dimension2D<Double> dimensions = this.getDimensions();
-        final Point2D<Double> top_right_vertex = context.getViewableArea().getPoint(PointMask.FRONT,PointMask.TOP,PointMask.RIGHT);
+        final Point2D<Double> top_right_vertex = context.getViewableArea().getPoint(Mask.FRONT,Mask.TOP,Mask.RIGHT);
         final Dimension2D<Double> viewable_area = new Dimension2D<Double>(0.0,0.0);
         
         

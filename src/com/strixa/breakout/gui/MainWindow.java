@@ -6,7 +6,6 @@ package com.strixa.breakout.gui;
 
 import com.strixa.breakout.gui.panel.GamePanel;
 import com.strixa.gui.StrixaWindow;
-import com.strixa.gui.StrixaWindow.WindowAction;
 
 /**
  * TODO:  Write Class Description
@@ -22,11 +21,26 @@ public class MainWindow extends StrixaWindow{
         }
     }
     
+    /**
+     * Actions this window can perform.
+     *
+     * @author Nicholas Rogé
+     */
     public static class Actions{
+        /**
+         * Opens the game screen.
+         */
         public static final int DISPLAY_GAME = 101;
     }
     
+    /** Field required for object serialization. */
+    private static final long serialVersionUID = -311561610124875501L;
+    
+    
     /*Begin Constructors*/
+    /**
+     * Sets up the window.
+     */
     public MainWindow(){
         this.registerWindowAction(Actions.DISPLAY_GAME,new DisplayGameAction());
         

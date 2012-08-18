@@ -4,8 +4,6 @@
  */
 package com.strixa.breakout.gui.gl;
 
-import javax.media.opengl.GL2;
-
 import com.strixa.gl.shapes.Circle;
 
 /**
@@ -76,6 +74,11 @@ public class Ball extends Circle{
     /*End Getter/Setter Methods*/
     
     /*Begin Other Methods*/
+    /**
+     * Gets this object's rising/falling status.
+     * 
+     * @return Returns true if this object is falling, and false, otherwise.
+     */
     public boolean isFalling(){
         return this.getMomentum()<0;
     }

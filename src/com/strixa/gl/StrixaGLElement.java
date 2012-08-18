@@ -7,9 +7,7 @@ package com.strixa.gl;
 import javax.media.opengl.GL2;
 
 import com.strixa.util.Dimension;
-import com.strixa.util.Dimension2D;
 import com.strixa.util.Point;
-import com.strixa.util.Point2D;
 
 
 /**

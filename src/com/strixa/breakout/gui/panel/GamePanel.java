@@ -4,36 +4,32 @@
  */
 package com.strixa.breakout.gui.panel;
 
-import java.awt.BorderLayout;
-
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 
-import com.strixa.breakout.gui.gl.Ball;
 import com.strixa.breakout.gui.gl.BreakoutCanvas;
-import com.strixa.breakout.gui.gl.Paddle;
 import com.strixa.gl.Strixa2DCanvas;
-import com.strixa.gl.StrixaGLCanvas;
-import com.strixa.gl.shapes.Circle;
-import com.strixa.gl.shapes.Rectangle;
 import com.strixa.gui.StrixaWindow;
 import com.strixa.gui.panel.StrixaPanel;
 import com.strixa.util.Dimension2D;
 
 
-
 /**
- * TODO:  Write Class Description
+ * Panel which contains the canvas for the Breakout game.
  *
  * @author Nicholas Rogé
  */
-public class GamePanel extends StrixaPanel{
-    private Ball           __ball;
+public class GamePanel extends StrixaPanel{    
+    /** Field required for object serialization. */
+    private static final long serialVersionUID = -2998874595883563728L;
+    
     private Strixa2DCanvas __canvas;
-    private Paddle  __paddle;
     
     
     /*Begin Initialization Methods*/
+    /**
+     * Initializes the GUI for this panel.
+     */
     protected void _initializeGUI(){
         final GLCapabilities capabilities = new GLCapabilities(GLProfile.getDefault());
         
@@ -56,6 +52,11 @@ public class GamePanel extends StrixaPanel{
     /*End Initialization Methods*/
     
     /*Begin Constructors*/
+    /**
+     * Constructs a new GamePanel panel.
+     * 
+     * @param parent The parent window.
+     */
     public GamePanel(StrixaWindow parent){
         super(parent);
         
